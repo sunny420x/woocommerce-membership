@@ -61,6 +61,49 @@ function woocommerce_membership_setting_page() {
             </table>
             <?php submit_button('บันทึกเกณฑ์คะแนน'); ?>
             <hr>
+            <?php
+            function getMemberShipLevel($score) {
+                if($score >= (int) get_option('ms_platinum_score', 30)) {
+                    return "Platinum";
+                } else if($score >= (int) get_option('ms_gold_score', 20)) {
+                    return "Gold";
+                } else if($score >= (int) get_option('ms_silver_score', 10)) { 
+                    return "Silver";
+                } else {
+                    return "-";
+                }
+            }
+            ?>
+            <table class="wp-list-table widefat fixed striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Display Name</th>
+                        <th>Email</th>
+                        <th>Score</th>
+                        <th>Level</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    global $wpdb;
+                    $results = $wpdb->get_results( "SELECT display_name,user_email,ID,score FROM {$wpdb->prefix}users WHERE score > 0 ORDER BY score DESC" );
+
+                    foreach ( $results as $row ) {
+                    ?>
+                    <tr>
+                        <td><?=$row->ID;?></td>
+                        <td><?=$row->display_name;?></td>
+                        <td><a href="/wp-admin/edit.php?s=<?=$row->user_email?>&post_status=all&post_type=shop_order&action=-1&m=0&_created_via&_customer_user&paged=1&action2=-1" target="_blank"><?=$row->user_email;?></a></td>
+                        <td><?=$row->score;?></td>
+                        <td><?=getMemberShipLevel($row->score);?></td>
+                    </tr>
+                    <?php
+                    }
+                    ?>
+                </tbody>
+            </table>
+            <hr>
             <p>Github Repository: <a href="https://github.com/sunny420x/woocommerce-membership" target="_blank">github.com/sunny420x/woocommerce-membership</a></p>
         </form>
     </div>
