@@ -24,6 +24,23 @@ function worldchem_membership_menu() {
     );
 }
 
+register_activation_hook( __FILE__, 'my_plugin_install' );
+
+function my_plugin_install() {
+    global $wpdb;
+
+    $user_table = $wpdb->prefix . 'users';
+
+    $row = $wpdb->get_results("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS 
+        WHERE TABLE_SCHEMA = '".DB_NAME."' 
+        AND TABLE_NAME = '$user_table' 
+        AND COLUMN_NAME = 'score'");
+
+    if (empty($row)) {
+        $wpdb->query("ALTER TABLE $user_table `score` INT(12) DEFAULT 0;");
+    }
+}
+
 function woocommerce_membership_setting_page() {
     ?>
     <div class="wrap" style="background: #fff; padding: 20px; border-radius: 10px; margin-top: 20px;">
