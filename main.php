@@ -396,13 +396,13 @@ function display_customer_points()
             font-weight: bold;
             color: <?php echo $bar_color;?>;
         }
-        .description #description-platinum::after {
+        .membership-description #description-platinum::after {
             border-color: transparent transparent <?php echo esc_attr(get_option('member-privileges-platinum-color')); ?> transparent;
         }
-        .description #description-gold::after {
+        .membership-description #description-gold::after {
             border-color: transparent transparent <?php echo esc_attr(get_option('member-privileges-gold-color')); ?> transparent;
         }
-        .description #description-silver::after {
+        .membership-description #description-silver::after {
             border-color: transparent transparent <?php echo esc_attr(get_option('member-privileges-silver-color')); ?> transparent;
         }
         #description-platinum {
