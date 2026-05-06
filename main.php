@@ -907,35 +907,68 @@ function getUserLevel($option) {
 add_filter('woocommerce_get_price_html', 'member_display_custom_price_html', 10, 2);
 function member_display_custom_price_html($price_html, $product) {
     if(get_option('membership_enable_member_privileges', 'no') === "no") return $price_html;
-
     if (!is_user_logged_in() || is_admin()) return $price_html;
     
-    $special_categories = array('member-privileges'); 
+    // ตรวจสอบ ID (ถ้าเป็น Variation ให้ดึง Parent ID มาเช็คหมวดหมู่)
+    $product_id = $product->is_type('variation') ? $product->get_parent_id() : $product->get_id();
+    $special_categories = array('member-privileges'); // แก้เป็น Slug ที่คุณใช้งานจริง
 
-    if (has_term($special_categories, 'product_cat', $product->get_id())) {
+    if (has_term($special_categories, 'product_cat', $product_id)) {
         
-        $discount_rate = getUserLevel("percent"); // สมมติว่า Platinum ลด 30% ต้องได้ 0.7
+        $discount_rate = getUserLevel("percent");
         $level_name = getUserLevel('name');
 
         if ($discount_rate >= 1 || empty($level_name)) return $price_html;
 
-        // ดึงราคาปกติ (Regular Price) แบบดิบๆ มาเลย ไม่เอาที่โดนฟิลเตอร์อื่นแก้
-        $regular_price = (float)$product->get_regular_price();
-        
-        // คำนวณราคาใหม่
-        $sale_price = $regular_price * $discount_rate;
+        // --- กรณีที่ 1: สินค้ามีหลายราคา (Variable Product) ---
+        if ($product->is_type('variable')) {
+            $min_reg_price = $product->get_variation_regular_price('min');
+            $max_reg_price = $product->get_variation_regular_price('max');
+            
+            $min_sale_price = $min_reg_price * $discount_rate;
+            $max_sale_price = $max_reg_price * $discount_rate;
 
-        // ตรวจสอบว่าคำนวณแล้วราคาลดลงจริงไหม (ป้องกันกรณี 350 ลดแล้วเหลือ 350)
-        if ($sale_price >= $regular_price) return $price_html;
+            // สร้าง HTML ขีดฆ่าช่วงราคาเดิม
+            $original_price_html = wc_price($min_reg_price) . ' – ' . wc_price($max_reg_price);
+            $new_price_html = wc_price($min_sale_price) . ' – ' . wc_price($max_sale_price);
 
-        // สร้าง HTML ใหม่
-        $price_html = '<del aria-hidden="true">' . wc_price($regular_price) . '</del> ';
-        $price_html .= '<ins>' . wc_price($sale_price) . '</ins>';
+            $price_html = '<del aria-hidden="true" style="color: #636363;">' . $original_price_html . '</del> ';
+            $price_html .= '<ins style="text-decoration:none;">' . $new_price_html . '</ins>';
+        } 
+        // --- กรณีที่ 2: สินค้าราคาเดียว (Simple Product) ---
+        else {
+            $regular_price = (float)$product->get_regular_price();
+            $sale_price = $regular_price * $discount_rate;
+            
+            if ($sale_price >= $regular_price) return $price_html;
+
+            $price_html = '<del aria-hidden="true" style="color: #636363;">' . wc_price($regular_price) . '</del> ';
+            $price_html .= '<ins style="text-decoration:none;">' . wc_price($sale_price) . '</ins>';
+        }
+
         $price_html .= ' <span class="member-tag" style="font-size:12px; color:#27ae60; display:block; margin-top: 5px;">(ราคาสำหรับสมาชิก ' . ucfirst($level_name) . ')</span>';
     }
 
     return $price_html;
 }
+
+add_filter('woocommerce_available_variation', function($data, $product, $variation) {
+    if(get_option('membership_enable_member_privileges', 'no') === "no") return $data;
+    if (!is_user_logged_in()) return $data;
+
+    $discount_rate = getUserLevel("percent");
+    $level_name = getUserLevel('name');
+    
+    if ($discount_rate < 1 && has_term('member-privileges', 'product_cat', $product->get_id())) {
+        $reg_price = (float)$variation->get_regular_price();
+        $sale_price = $reg_price * $discount_rate;
+        
+        // แก้ไขการแสดงผลราคาใน JSON ที่ส่งไปหน้าบ้าน
+        $data['price_html'] = '<del>' . wc_price($reg_price) . '</del> <ins>' . wc_price($sale_price) . '</ins>';
+        $data['display_price'] = $sale_price;
+    }
+    return $data;
+}, 10, 3);
 
 /**
  * บังคับเปลี่ยนราคาในตะกร้าให้เป็นราคาสมาชิก
@@ -944,27 +977,26 @@ add_action( 'woocommerce_before_calculate_totals', 'apply_member_cart_price', 99
 
 function apply_member_cart_price( $cart ) {
     if(get_option('membership_enable_member_privileges', 'no') === "no") return;
-
     if ( is_admin() && ! defined( 'DOING_AJAX' ) ) return;
     if ( ! is_user_logged_in() ) return;
 
-    // ดึงเรทส่วนลดจากฟังก์ชันที่พี่ทำไว้
     $discount_rate = getUserLevel("percent");
-
-    // ถ้าไม่มีส่วนลด (คะแนน < 10) ไม่ต้องทำอะไร
     if ( $discount_rate >= 1 ) return;
 
-    // วนลูปสินค้าในตะกร้า
     foreach ( $cart->get_cart() as $cart_item ) {
         $product = $cart_item['data'];
+        
+        // เช็ค ID ตัวแม่ถ้าเป็น Variation
+        $target_id = $product->is_type('variation') ? $product->get_parent_id() : $product->get_id();
 
-        // เช็คว่าสินค้าอยู่ในหมวดสิทธิพิเศษไหม
-        if ( has_term( 'member-privileges', 'product_cat', $product->get_id() ) ) {
-            
+        if ( has_term( 'member-privileges', 'product_cat', $target_id ) ) {
+            // ใช้ get_price() เพื่อให้ดึงราคาปัจจุบันของ Variation นั้นๆ
             $regular_price = (float)$product->get_regular_price();
-            $member_price = $regular_price * $discount_rate;
+            
+            // ถ้า regular_price ว่าง (บางทีตั้งแค่ราคาขาย) ให้ใช้ get_price
+            if(!$regular_price) $regular_price = (float)$product->get_price();
 
-            // บังคับเซ็ตราคาใหม่ในตะกร้า
+            $member_price = $regular_price * $discount_rate;
             $product->set_price( $member_price );
         }
     }

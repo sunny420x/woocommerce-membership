@@ -95,10 +95,16 @@
     border-radius: 20px;
     position: relative;
     color: #fff;
+    transition: .2s ease-in-out;
+    cursor: pointer;
 }
 
 .membership-description .card p {
     margin: 0;
+}
+
+.membership-description .card:hover {
+    opacity: 1 !important;
 }
 
 .membership-description .card .card_header {
