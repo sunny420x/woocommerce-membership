@@ -529,9 +529,9 @@ function display_customer_points()
                         <div class="progress-fill" style="width: <?php echo $percentage; ?>%;"></div>
                         <div class="milestones">
                             <div class="dot active"><span class="dot-label">0</span></div>
-                            <div class="dot <?php echo ($points >= get_option('ms_silver_score', 10)) ? 'active' : ''; ?>" style="left: 33.33%; position: absolute;"><span class="dot-label">10</span></div>
-                            <div class="dot <?php echo ($points >= get_option('ms_gold_score', 20)) ? 'active' : ''; ?>" style="left: 66.66%; position: absolute;"><span class="dot-label">20</span></div>
-                            <div class="dot <?php echo ($points >= get_option('ms_platinum_score', 30)) ? 'active' : ''; ?>" style="right: 0; position: absolute;"><span class="dot-label">30+</span></div>
+                            <div class="dot <?php echo ($points >= get_option('ms_silver_score', 10)) ? 'active' : ''; ?>" style="left: 33.33%; position: absolute;"><span class="dot-label"><?=get_option('ms_silver_score', 30)?></span></div>
+                            <div class="dot <?php echo ($points >= get_option('ms_gold_score', 20)) ? 'active' : ''; ?>" style="left: 66.66%; position: absolute;"><span class="dot-label"><?=get_option('ms_gold_score', 30)?></span></div>
+                            <div class="dot <?php echo ($points >= get_option('ms_platinum_score', 30)) ? 'active' : ''; ?>" style="right: 0; position: absolute;"><span class="dot-label"><?=get_option('ms_platinum_score', 30)?>+</span></div>
                         </div>
                     </div>
                     <div class="membership-description">
@@ -543,7 +543,7 @@ function display_customer_points()
                             <span class="display_name"><?=wp_get_current_user()->display_name?></span><span class="card_number">1155 1854 7745</span>
                             <?=get_option('ms_silver_description_content');?>
                             <div class="card_points">
-                                <span class="points"><?=$points?></span><span class="text">Points</span>
+                                <span class="points"><?=get_option('ms_silver_score', 10)?></span><span class="text">Points</span>
                             </div>
                         </div>
                         <div class="card" id="description-gold" style="left: 0%; <?php if($points >= get_option('ms_gold_score', 20) && $points < get_option('ms_platinum_score', 30)) { echo 'opacity: 1;'; } ?>">
@@ -554,7 +554,7 @@ function display_customer_points()
                             <span class="display_name"><?=wp_get_current_user()->display_name?></span><span class="card_number">1155 1854 7745</span>
                             <?=get_option('ms_gold_description_content');?>
                             <div class="card_points">
-                                <span class="points"><?=$points?></span><span class="text">Points</span>
+                                <span class="points"><?=get_option('ms_gold_score', 20)?></span><span class="text">Points</span>
                             </div>
                         </div>
                         <div class="card" id="description-platinum" style="left: 0%; <?php if($points >= get_option('ms_platinum_score', 30)) { echo 'opacity: 1;'; } ?>">
@@ -565,7 +565,7 @@ function display_customer_points()
                             <span class="display_name"><?=wp_get_current_user()->display_name?></span><span class="card_number">1155 1854 7745</span>
                             <?=get_option('ms_platinum_description_content');?>
                             <div class="card_points">
-                                <span class="points"><?=$points?></span><span class="text">Points</span>
+                                <span class="points"><?=get_option('ms_platinum_score', 30)?></span><span class="text">Points</span>
                             </div>
                         </div>
                     </div>
