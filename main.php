@@ -77,275 +77,404 @@ add_action('wp_enqueue_scripts', 'worldchem_enqueue_assets');
 function woocommerce_membership_setting_page()
 {
     ?>
-    <div class="wrap" style="background: #fff; padding: 20px; border-radius: 10px; margin-top: 20px;">
-        <h1>👥 ตั้งค่าระบบ Membership</h1>
-        <form action="options.php" method="post">
-            <?php
-            settings_fields('membership_settings_group');
-            ?>
-            <h2>ระบบสะสมคะแนนจากการซื้อ</h1>
-            <table class="wp-list-table widefat fixed striped">
-                <tr>
-                    <td>ลูกค้าจะได้รับ 1 คะแนนต่อการซื้อ</td>
-                    <td><input type="text" name="membership_point_per_baht" value="<?=get_option('membership_point_per_baht', 500);?>"> บาท</td>
-                </tr>
-            </table>
-            <h2>ระบบแลกคะแนนเป็นส่วนลด</h1>
-            <table class="wp-list-table widefat fixed striped">
-                <tr>
-                    <td>ระบบแลกคะแนนเป็นส่วนลด</td>
-                    <td>
-                        <select name="membership_enable_redeem" id="">
-                            <option value="yes" <?php selected( get_option('membership_enable_redeem'), 'yes' ); ?>>เปิดใช้งาน</option>
-                            <option value="no" <?php selected( get_option('membership_enable_redeem'), 'no' ); ?>>ปิดใช้งาน</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td>ลูกค้าสามารถใช้ 1 คะแนน ในการแลกเป็นส่วนลดได้</td>
-                    <td><input type="text" name="membership_baht_per_point" value="<?=get_option('membership_baht_per_point', 1);?>"> บาท </td>
-                </tr>
-            </table>
-            <h2>เกณฑ์การคิดคะแนนและให้ส่วนลดทั้งตะกร้า</h1>
-            <table class="wp-list-table widefat fixed striped" style="margin-top: 20px;">
-                <thead>
-                    <tr>
-                        <th>ระดับสมาชิก (Membership Level)</th>
-                        <th>คะแนนขั้นต่ำ (Minimum Score)</th>
-                        <th>ลดเป็นจำนวนร้อยละ (Discount Percentage)</th>
-                        <th>สีที่ใช้แสดงในระบบ</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Platinum Membership</strong></td>
-                        <td><input type="number" name="ms_platinum_score"
-                                value="<?php echo esc_attr(get_option('ms_platinum_score', 30)); ?>" /></td>
-                        <td><input type="number" step="0.01" name="ms_platinum_discount"
-                                value="<?php echo esc_attr(get_option('ms_platinum_discount', 3)); ?>" /> %</td>
-                        <td><input type="text" name="member-privileges-platinum-color"
-                                value="<?php echo esc_attr(get_option('member-privileges-platinum-color')); ?>" /></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Gold Membership</strong></td>
-                        <td><input type="number" name="ms_gold_score"
-                                value="<?php echo esc_attr(get_option('ms_gold_score', 20)); ?>" /></td>
-                        <td><input type="number" step="0.01" name="ms_gold_discount"
-                                value="<?php echo esc_attr(get_option('ms_gold_discount', 2)); ?>" /> %</td>
-                        <td><input type="text" name="member-privileges-gold-color"
-                                value="<?php echo esc_attr(get_option('member-privileges-gold-color')); ?>" /></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Silver Membership</strong></td>
-                        <td><input type="number" name="ms_silver_score"
-                                value="<?php echo esc_attr(get_option('ms_silver_score', 10)); ?>" /></td>
-                        <td><input type="number" step="0.01" name="ms_silver_discount"
-                                value="<?php echo esc_attr(get_option('ms_silver_discount', 1)); ?>" /> %</td>
-                        <td><input type="text" name="member-privileges-silver-color"
-                                value="<?php echo esc_attr(get_option('member-privileges-silver-color')); ?>" /></td>
-                    </tr>
-                </tbody>
-            </table>
-            <h2>เนื้อหาที่แสดงในการ์ด</h2>
-            หัวข้อการ์ด: <input type="text" name="ms_card_title" value="<?php echo esc_attr(get_option('ms_card_title')); ?>" style="width: 500px;" />
-            <br><br>
-            <table class="wp-list-table widefat fixed striped" style="margin-top: 20px;">
-                <thead>
-                    <tr>
-                        <th>ระดับสมาชิก (Membership Level)</th>
-                        <th>เนื้อหา</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Platinum Membership:</strong></td>
-                        <td>
-                            <input type="text" name="ms_platinum_description_title"
-                                value="<?php echo esc_attr(get_option('ms_platinum_description_title')); ?>" style="width: 500px;" />
-                            <textarea name="ms_platinum_description_content" id="" style="width: 500px; height: 200px;"><?=get_option('ms_platinum_description_content')?></textarea>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Gold Membership:</strong></td>
-                        <td>
-                            <input type="text" name="ms_gold_description_title"
-                                value="<?php echo esc_attr(get_option('ms_gold_description_title')); ?>" style="width: 500px;" />
-                            <textarea name="ms_gold_description_content" id="" style="width: 500px; height: 200px;"><?=get_option('ms_gold_description_content')?></textarea>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Silver Membership:</strong></td>
-                        <td>
-                            <input type="text" name="ms_silver_description_title"
-                                value="<?php echo esc_attr(get_option('ms_silver_description_title')); ?>" style="width: 500px;" />
-                            <textarea name="ms_silver_description_content" id="" style="width: 500px; height: 200px;"><?=get_option('ms_silver_description_content')?></textarea>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <br>
-            <h1>⭐ ส่วนลดสำหรับสินค้าพิเศษ</h1>
-            <br>
-            <table class="wp-list-table widefat fixed striped">
-                <tr>
-                    <td>ระบบส่วนลดสำหรับสินค้าพิเศษ</td>
-                    <td>
-                        <select name="membership_enable_member_privileges" id="">
-                            <option value="yes" <?php selected( get_option('membership_enable_member_privileges'), 'yes' ); ?>>เปิดใช้งาน</option>
-                            <option value="no" <?php selected( get_option('membership_enable_member_privileges'), 'no' ); ?>>ปิดใช้งาน</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Slug ของประเภทสินค้า:</td>
-                    <td>
-                        <input type="text" name="member-privileges-slug" value="<?=get_option('member-privileges-slug', 'member-privileges');?>">
-                    </td>
-                </tr>
-            </table>
-            <table class="wp-list-table widefat fixed striped" style="margin-top: 20px;">
-                <thead>
-                    <tr>
-                        <th>ระดับสมาชิก (Membership Level)</th>
-                        <th>ลดเป็นจำนวนร้อยละ (Discount Percentage)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Silver Membership</strong></td>
-                        <td><input type="number" name="member-privileges-silver" value="<?php echo esc_attr(get_option('member-privileges-silver', 10)); ?>" /> %</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Gold Membership</strong></td>
-                        <td><input type="number" name="member-privileges-gold" value="<?php echo esc_attr(get_option('member-privileges-gold', 20)); ?>" /> %</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Platinum Membership</strong></td>
-                        <td><input type="number" name="member-privileges-platinum" value="<?php echo esc_attr(get_option('member-privileges-platinum', 30)); ?>" /> %</td>
-                    </tr>
-                </tbody>
-            </table>
-            <br>
-            <h1>⭐ ส่วนลดสำหรับ Brand พิเศษ</h1>
-            <table class="wp-list-table widefat fixed striped" style="margin-top: 20px;">
-                <thead>
-                    <tr>
-                        <th>รายการ</th>
-                        <th colspan="2">ตั้งค่า</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>เปิดใช้งาน Brand Privilege:</strong></td>
-                        <td colspan="2">
-                            <select name="brands_privilege_enable" id="">
-                                <option value="yes" <?php selected(get_option('brands_privilege_enable', 'no'), 'yes'); ?>>เปิดใช้งาน</option>
-                                <option value="no" <?php selected(get_option('brands_privilege_enable', 'no'), 'no'); ?>>ปิดใช้งาน</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>รายชื่อ Slug Brand ที่อยู่ในโปรโมชั่น:</strong></td>
-                        <td colspan="2"><textarea name="brands_privilege_list" /><?php echo esc_attr(get_option('brands_privilege_list')); ?></textarea></td>
-                    </tr>
-                    <tr>
-                        <td><strong>ส่วนลดระดับที่ 1</strong></td>
-                        <td>
-                            <input type="number" name="brands_privilege_step_01_start" value="<?php echo esc_attr(get_option('brands_privilege_step_01_start')); ?>" />
-                            -
-                            <input type="number" name="brands_privilege_step_01_end" value="<?php echo esc_attr(get_option('brands_privilege_step_01_end')); ?>" />
-                            บาท
-                        </td>
-                        <td>
-                            ลดเป็นจำนวนร้อยละ <input type="number" name="brands_privilege_step_01_discount_percent" value="<?php echo esc_attr(get_option('brands_privilege_step_01_discount_percent', 2)); ?>" /> %
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>ส่วนลดระดับที่ 2</strong></td>
-                        <td>
-                            <input type="number" name="brands_privilege_step_02_start" value="<?php echo esc_attr(get_option('brands_privilege_step_02_start')); ?>" />
-                            -
-                            <input type="number" name="brands_privilege_step_02_end" value="<?php echo esc_attr(get_option('brands_privilege_step_02_end')); ?>" />
-                            บาท
-                        </td>
-                        <td>
-                            ลดเป็นจำนวนร้อยละ <input type="number" name="brands_privilege_step_02_discount_percent" value="<?php echo esc_attr(get_option('brands_privilege_step_02_discount_percent', 3)); ?>" /> %
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>ส่วนลดระดับที่ 3</strong></td>
-                        <td>
-                            <input type="number" name="brands_privilege_step_03_start" value="<?php echo esc_attr(get_option('brands_privilege_step_03_start')); ?>" />
-                            -
-                            <input type="number" name="brands_privilege_step_03_end" value="<?php echo esc_attr(get_option('brands_privilege_step_03_end')); ?>" />
-                            บาท
-                        </td>
-                        <td>
-                            ลดเป็นจำนวนร้อยละ <input type="number" name="brands_privilege_step_03_discount_percent" value="<?php echo esc_attr(get_option('brands_privilege_step_03_discount_percent', 4)); ?>" /> %
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>ส่วนลดระดับที่ 4</strong></td>
-                        <td>
-                            > <input type="number" name="brands_privilege_step_04" value="<?php echo esc_attr(get_option('brands_privilege_step_04')); ?>" />
-                            บาท
-                        </td>
-                        <td>
-                            ลดเป็นจำนวนร้อยละ <input type="number" name="brands_privilege_step_04_discount_percent" value="<?php echo esc_attr(get_option('brands_privilege_step_04_discount_percent', 5)); ?>" /> %
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <?php submit_button('บันทึกการเปลี่ยนแปลง'); ?>
-            <?php
-            function getMemberShipLevel($score)
-            {
-                if ($score >= (int) get_option('ms_platinum_score', 30)) {
-                    return "Platinum";
-                } else if ($score >= (int) get_option('ms_gold_score', 20)) {
-                    return "Gold";
-                } else if ($score >= (int) get_option('ms_silver_score', 10)) {
-                    return "Silver";
-                } else {
-                    return "-";
-                }
-            }
-            ?>
-            <h1>👤 สมาชิกเว็บไซต์และคะแนนในระบบ</h1>
-            <br>
-            <table class="wp-list-table widefat fixed striped">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>ชื่อที่แสดงในระบบ (Display Name)</th>
-                        <th>อีเมล์ (Email)</th>
-                        <th>คะแนนปัจจุบัน (Score)</th>
-                        <th>ระดับสมาชิก</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    global $wpdb;
-                    $results = $wpdb->get_results("SELECT display_name,user_email,ID,score FROM {$wpdb->prefix}users WHERE score > 0 ORDER BY score DESC");
-
-                    foreach ($results as $row) {
-                        ?>
+    <style>
+        .leftside {
+            width: 350px;
+            background: #f8f8f8;
+            height: max-content;
+        }
+        .leftside h1 {
+            background: #009FE3;
+            color: #fff;
+            font-size: 16px;
+            padding: 10px 20px;
+            margin: 0;
+        }
+        .leftside a {
+            padding: 10px 20px;
+            font-size: 14px;
+            background: #f8f8f8;
+            color: #000;
+            transition: .2s ease-in-out;
+            display: block;
+            width: 100%;
+            text-decoration: none;
+        }
+        .leftside a:hover {
+            background: #fff;
+            cursor: pointer;
+        }
+        .container {
+            width: 1200px;
+            background: #fff; 
+        }
+        .container h1 {
+            background: #555;
+            color: #fff;
+            font-size: 16px;
+            padding: 10px 20px;
+            margin: 0;
+        }
+        .container p {
+            padding: 0;
+        }
+        .white-label-zone {
+            width: calc(100% + 20px);
+            height: auto;
+            background: #fff;
+            display: flex;
+            margin: 0 0 0 -20px;
+        }
+        .white-label-zone h1,p {
+            padding: 0 20px;
+        }
+    </style>
+    <div class="white-label-zone no-print">
+        <span style="padding: 60px 10px 60px 40px;float: left;font-size: 60px;">👑</span>
+        <div style="padding: 20px 0;">
+            <h1>WooCommerce Membership</h1>
+            <p>ระบบสิทธิพิเศษ Membership สำหรับ WooCommerce บน WordPress ประกอบไปด้วย คะแนนและระดับของสมาชิก แลกคะแนนเป็นส่วนลด ส่วนลดสำหรับสินค้าพิเศษ ส่วนลดสำหรับ Brand พิเศษ เป็นต้น
+                <br>
+                <strong>Github Repository:</strong> <a href="https://github.com/sunny420x/woocommerce-membership" target="_blank">https://github.com/sunny420x/woocommerce-membership</a>
+            </p>
+        </div>
+    </div>
+    <div class="wrap">
+        <div style="display: flex;">
+            <div class="leftside">
+                <h1>WooCommerce Membership</h1>
+                <a href="/wp-admin/admin.php?page=woocommerce-membership-settings&option=member_privilege">คะแนนและระดับของสมาชิก</a>
+                <a href="/wp-admin/admin.php?page=woocommerce-membership-settings&option=redeem_from_score">แลกคะแนนเป็นส่วนลด</a>
+                <a href="/wp-admin/admin.php?page=woocommerce-membership-settings&option=special_offers">ส่วนลดสำหรับสินค้าพิเศษ</a>
+                <a href="/wp-admin/admin.php?page=woocommerce-membership-settings&option=brands_privilege">ส่วนลดสำหรับ Brand พิเศษ</a>
+                <a href="/wp-admin/admin.php?page=woocommerce-membership-settings&option=members">สมาชิกทั้งหมด</a>
+            </div>
+            <div class="container">
+                <?php
+                if(isset($_GET['option']) && $_GET['option'] == "redeem_from_score") {
+                ?>
+                <form action="options.php" method="post">
+                <?php
+                settings_fields('membership_settings_group');
+                ?>
+                <h1>ระบบแลกคะแนนเป็นส่วนลด</h1>
+                <div style="padding: 25px 25px 25px 25px;">
+                    <table class="wp-list-table widefat fixed striped">
                         <tr>
-                            <td><?= $row->ID; ?></td>
-                            <td><a href="/wp-admin/user-edit.php?user_id=<?=$row->ID;?>" target="_blank"><?= $row->display_name; ?></a></td>
-                            <td><a href="/wp-admin/edit.php?s=<?= $row->user_email ?>&post_status=all&post_type=shop_order&action=-1&m=0&_created_via&_customer_user&paged=1&action2=-1"
-                                    target="_blank"><?= $row->user_email; ?></a></td>
-                            <td><?= $row->score; ?></td>
-                            <td><?= getMemberShipLevel($row->score); ?></td>
+                            <td>ระบบแลกคะแนนเป็นส่วนลด</td>
+                            <td>
+                                <select name="membership_enable_redeem" id="">
+                                    <option value="yes" <?php selected( get_option('membership_enable_redeem'), 'yes' ); ?>>เปิดใช้งาน</option>
+                                    <option value="no" <?php selected( get_option('membership_enable_redeem'), 'no' ); ?>>ปิดใช้งาน</option>
+                                </select>
+                            </td>
                         </tr>
-                        <?php
+                        <tr>
+                            <td>ลูกค้าสามารถใช้ 1 คะแนน ในการแลกเป็นส่วนลดได้</td>
+                            <td><input type="text" name="membership_baht_per_point" value="<?=get_option('membership_baht_per_point', 1);?>"> บาท </td>
+                        </tr>
+                    </table>
+                    <?php submit_button('บันทึกการเปลี่ยนแปลง'); ?>
+                </div>
+                </form>
+                <?php
+                } elseif(isset($_GET['option']) && $_GET['option'] == "member_privilege") {
+                ?>
+                <form action="options.php" method="post">
+                <?php
+                settings_fields('membership_settings_group');
+                ?>
+                <h1>เกณฑ์การคิดคะแนนและให้ส่วนลดทั้งตะกร้า</h1>
+                <div style="padding: 25px 25px 25px 25px;">
+                    <table class="wp-list-table widefat fixed striped">
+                        <tr>
+                            <td>ลูกค้าจะได้รับ 1 คะแนนต่อการซื้อ</td>
+                            <td><input type="text" name="membership_point_per_baht" value="<?=get_option('membership_point_per_baht', 500);?>"> บาท</td>
+                        </tr>
+                    </table>
+                    <table class="wp-list-table widefat fixed striped" style="margin-top: 20px;">
+                        <thead>
+                            <tr>
+                                <th>ระดับสมาชิก (Membership Level)</th>
+                                <th>คะแนนขั้นต่ำ (Minimum Score)</th>
+                                <th>ลดเป็นจำนวนร้อยละ (Discount Percentage)</th>
+                                <th>สีที่ใช้แสดงในระบบ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Platinum Membership</strong></td>
+                                <td><input type="number" name="ms_platinum_score"
+                                        value="<?php echo esc_attr(get_option('ms_platinum_score', 30)); ?>" /></td>
+                                <td><input type="number" step="0.01" name="ms_platinum_discount"
+                                        value="<?php echo esc_attr(get_option('ms_platinum_discount', 3)); ?>" /> %</td>
+                                <td><input type="text" name="member-privileges-platinum-color"
+                                        value="<?php echo esc_attr(get_option('member-privileges-platinum-color')); ?>" /></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Gold Membership</strong></td>
+                                <td><input type="number" name="ms_gold_score"
+                                        value="<?php echo esc_attr(get_option('ms_gold_score', 20)); ?>" /></td>
+                                <td><input type="number" step="0.01" name="ms_gold_discount"
+                                        value="<?php echo esc_attr(get_option('ms_gold_discount', 2)); ?>" /> %</td>
+                                <td><input type="text" name="member-privileges-gold-color"
+                                        value="<?php echo esc_attr(get_option('member-privileges-gold-color')); ?>" /></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Silver Membership</strong></td>
+                                <td><input type="number" name="ms_silver_score"
+                                        value="<?php echo esc_attr(get_option('ms_silver_score', 10)); ?>" /></td>
+                                <td><input type="number" step="0.01" name="ms_silver_discount"
+                                        value="<?php echo esc_attr(get_option('ms_silver_discount', 1)); ?>" /> %</td>
+                                <td><input type="text" name="member-privileges-silver-color"
+                                        value="<?php echo esc_attr(get_option('member-privileges-silver-color')); ?>" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br><br>
+                    หัวข้อการ์ด: <input type="text" name="ms_card_title" value="<?php echo esc_attr(get_option('ms_card_title')); ?>" style="width: 500px;" />
+                    <br><br>
+                    <table class="wp-list-table widefat fixed striped" style="margin-top: 20px;">
+                        <thead>
+                            <tr>
+                                <th>ระดับสมาชิก (Membership Level)</th>
+                                <th>เนื้อหา</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Platinum Membership:</strong></td>
+                                <td>
+                                    <input type="text" name="ms_platinum_description_title"
+                                        value="<?php echo esc_attr(get_option('ms_platinum_description_title')); ?>" style="width: 500px;" />
+                                    <textarea name="ms_platinum_description_content" id="" style="width: 500px; height: 200px;"><?=get_option('ms_platinum_description_content')?></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Gold Membership:</strong></td>
+                                <td>
+                                    <input type="text" name="ms_gold_description_title"
+                                        value="<?php echo esc_attr(get_option('ms_gold_description_title')); ?>" style="width: 500px;" />
+                                    <textarea name="ms_gold_description_content" id="" style="width: 500px; height: 200px;"><?=get_option('ms_gold_description_content')?></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Silver Membership:</strong></td>
+                                <td>
+                                    <input type="text" name="ms_silver_description_title"
+                                        value="<?php echo esc_attr(get_option('ms_silver_description_title')); ?>" style="width: 500px;" />
+                                    <textarea name="ms_silver_description_content" id="" style="width: 500px; height: 200px;"><?=get_option('ms_silver_description_content')?></textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <?php submit_button('บันทึกการเปลี่ยนแปลง'); ?>
+                </div>
+                </form>
+                <?php
+                } elseif(isset($_GET['option']) && $_GET['option'] == "special_offers") {
+                ?>
+                <form action="options.php" method="post">
+                <?php
+                settings_fields('membership_settings_group');
+                ?>
+                <h1>⭐ ส่วนลดสำหรับสินค้าพิเศษ</h1>
+                <br>
+                <div style="padding: 0 25px 25px 25px;">
+                    <table class="wp-list-table widefat fixed striped">
+                        <tr>
+                            <td>ระบบส่วนลดสำหรับสินค้าพิเศษ</td>
+                            <td>
+                                <select name="membership_enable_member_privileges" id="">
+                                    <option value="yes" <?php selected( get_option('membership_enable_member_privileges'), 'yes' ); ?>>เปิดใช้งาน</option>
+                                    <option value="no" <?php selected( get_option('membership_enable_member_privileges'), 'no' ); ?>>ปิดใช้งาน</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Slug ของประเภทสินค้า:</td>
+                            <td>
+                                <input type="text" name="member-privileges-slug" value="<?=get_option('member-privileges-slug', 'member-privileges');?>">
+                            </td>
+                        </tr>
+                        <table class="wp-list-table widefat fixed striped" style="margin-top: 20px;">
+                        <thead>
+                            <tr>
+                                <th>ระดับสมาชิก (Membership Level)</th>
+                                <th>ลดเป็นจำนวนร้อยละ (Discount Percentage)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Silver Membership</strong></td>
+                                <td><input type="number" name="member-privileges-silver" value="<?php echo esc_attr(get_option('member-privileges-silver', 10)); ?>" /> %</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Gold Membership</strong></td>
+                                <td><input type="number" name="member-privileges-gold" value="<?php echo esc_attr(get_option('member-privileges-gold', 20)); ?>" /> %</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Platinum Membership</strong></td>
+                                <td><input type="number" name="member-privileges-platinum" value="<?php echo esc_attr(get_option('member-privileges-platinum', 30)); ?>" /> %</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </table>
+                    <?php submit_button('บันทึกการเปลี่ยนแปลง'); ?>
+                </div>
+                </form>
+                <?php
+                } elseif(isset($_GET['option']) && $_GET['option'] == "brands_privilege") {
+                ?>
+                <form action="options.php" method="post">
+                <?php
+                settings_fields('membership_settings_group');
+                ?>
+                <h1>⭐ ส่วนลดสำหรับ Brand พิเศษ</h1>
+                <div style="padding: 0 25px 25px 25px;">
+                    <table class="wp-list-table widefat fixed striped" style="margin-top: 20px;">
+                        <thead>
+                            <tr>
+                                <th>รายการ</th>
+                                <th colspan="2">ตั้งค่า</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>เปิดใช้งาน Brand Privilege:</strong></td>
+                                <td colspan="2">
+                                    <select name="brands_privilege_enable" id="">
+                                        <option value="yes" <?php selected(get_option('brands_privilege_enable', 'no'), 'yes'); ?>>เปิดใช้งาน</option>
+                                        <option value="no" <?php selected(get_option('brands_privilege_enable', 'no'), 'no'); ?>>ปิดใช้งาน</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>รายชื่อ Slug Brand ที่อยู่ในโปรโมชั่น:</strong></td>
+                                <td colspan="2"><textarea name="brands_privilege_list" /><?php echo esc_attr(get_option('brands_privilege_list')); ?></textarea></td>
+                            </tr>
+                            <tr>
+                                <td><strong>ส่วนลดระดับที่ 1</strong></td>
+                                <td>
+                                    <input type="number" name="brands_privilege_step_01_start" value="<?php echo esc_attr(get_option('brands_privilege_step_01_start')); ?>" />
+                                    -
+                                    <input type="number" name="brands_privilege_step_01_end" value="<?php echo esc_attr(get_option('brands_privilege_step_01_end')); ?>" />
+                                    บาท
+                                </td>
+                                <td>
+                                    ลดเป็นจำนวนร้อยละ <input type="number" name="brands_privilege_step_01_discount_percent" value="<?php echo esc_attr(get_option('brands_privilege_step_01_discount_percent', 2)); ?>" /> %
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>ส่วนลดระดับที่ 2</strong></td>
+                                <td>
+                                    <input type="number" name="brands_privilege_step_02_start" value="<?php echo esc_attr(get_option('brands_privilege_step_02_start')); ?>" />
+                                    -
+                                    <input type="number" name="brands_privilege_step_02_end" value="<?php echo esc_attr(get_option('brands_privilege_step_02_end')); ?>" />
+                                    บาท
+                                </td>
+                                <td>
+                                    ลดเป็นจำนวนร้อยละ <input type="number" name="brands_privilege_step_02_discount_percent" value="<?php echo esc_attr(get_option('brands_privilege_step_02_discount_percent', 3)); ?>" /> %
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>ส่วนลดระดับที่ 3</strong></td>
+                                <td>
+                                    <input type="number" name="brands_privilege_step_03_start" value="<?php echo esc_attr(get_option('brands_privilege_step_03_start')); ?>" />
+                                    -
+                                    <input type="number" name="brands_privilege_step_03_end" value="<?php echo esc_attr(get_option('brands_privilege_step_03_end')); ?>" />
+                                    บาท
+                                </td>
+                                <td>
+                                    ลดเป็นจำนวนร้อยละ <input type="number" name="brands_privilege_step_03_discount_percent" value="<?php echo esc_attr(get_option('brands_privilege_step_03_discount_percent', 4)); ?>" /> %
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>ส่วนลดระดับที่ 4</strong></td>
+                                <td>
+                                    > <input type="number" name="brands_privilege_step_04" value="<?php echo esc_attr(get_option('brands_privilege_step_04')); ?>" />
+                                    บาท
+                                </td>
+                                <td>
+                                    ลดเป็นจำนวนร้อยละ <input type="number" name="brands_privilege_step_04_discount_percent" value="<?php echo esc_attr(get_option('brands_privilege_step_04_discount_percent', 5)); ?>" /> %
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <?php submit_button('บันทึกการเปลี่ยนแปลง'); ?>
+                </div>
+                </form>
+                <?php
+                } elseif(isset($_GET['option']) && $_GET['option'] == "members") {
+                ?>
+                <?php
+                function getMemberShipLevel($score)
+                {
+                    if ($score >= (int) get_option('ms_platinum_score', 30)) {
+                        return "Platinum";
+                    } else if ($score >= (int) get_option('ms_gold_score', 20)) {
+                        return "Gold";
+                    } else if ($score >= (int) get_option('ms_silver_score', 10)) {
+                        return "Silver";
+                    } else {
+                        return "-";
                     }
-                    ?>
-                </tbody>
-            </table>
-            <p>Github Repository: <a href="https://github.com/sunny420x/woocommerce-membership"
-                    target="_blank">github.com/sunny420x/woocommerce-membership</a></p>
-        </form>
+                }
+                ?>
+                <h1>สมาชิกเว็บไซต์และคะแนนในระบบ</h1>
+                <div style="padding: 25px 25px 25px 25px;">
+                    <table class="wp-list-table widefat fixed striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>ชื่อที่แสดงในระบบ (Display Name)</th>
+                                <th>อีเมล์ (Email)</th>
+                                <th>คะแนนปัจจุบัน (Score)</th>
+                                <th>ระดับสมาชิก</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            global $wpdb;
+                            $results = $wpdb->get_results("SELECT display_name,user_email,ID,score FROM {$wpdb->prefix}users WHERE score > 0 ORDER BY score DESC");
+        
+                            foreach ($results as $row) {
+                                ?>
+                                <tr>
+                                    <td><?= $row->ID; ?></td>
+                                    <td><a href="/wp-admin/user-edit.php?user_id=<?=$row->ID;?>" target="_blank"><?= $row->display_name; ?></a></td>
+                                    <td><a href="/wp-admin/edit.php?s=<?= $row->user_email ?>&post_status=all&post_type=shop_order&action=-1&m=0&_created_via&_customer_user&paged=1&action2=-1"
+                                            target="_blank"><?= $row->user_email; ?></a></td>
+                                    <td><?= $row->score; ?></td>
+                                    <td><?= getMemberShipLevel($row->score); ?></td>
+                                </tr>
+                                <?php
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+                <?php
+                } else {
+                ?>
+                <h1>WooCommerce Membership Plugin</h1>
+                <div style="padding: 0 25px 25px 25px;">
+                    <h2>ระบบนี้คืออะไร ?</h2>
+                    <p>ระบบ WooCommerce Membership คือระบบที่ออกแบบมาเพื่อรองรับการทำการตลาดบนเว็บไซต์ โดยลูกค้าสามารถสะสมคะแนนจากการซื้อสินค้าภายในเว็บไซต์ 
+                        ลูกค้าสามารถรับส่วนลดทั้งตะกร้าตามระดับสมาชิกที่ถูกกำหนดตามเกณฑ์การคิดระดับสมาชิก ลูกค้าจะได้รับส่วนลดสำหรับ Brand พิเศษที่กำหนดไว้โดยคิดตามเกณฑ์ราคา 
+                        ลูกค้าสามารถแลกคะแนนเป็นส่วนลด
+                    </p>
+                    <h2>วิธีการติดตั้ง</h2>
+                    <p>
+                        สามารถติดตั้งปลั้กอินนี้ได้โดยการดาวน์โหลดไฟล์นี้จาก Github หน้านี้ และอัพโหลดลงในหน้า /wp-admin/plugin-install.php หลังจากอัพโหลด 
+                        และเปิดใช้งาน (Activate) ระบบจะทำการสร้างตารางและคอลัมน์ใหม่จากตารางเดิมโดยอัตโนมัติ
+                    </p>
+                </div>
+                <?php
+                }
+                ?>
+            </div>
+        </div>
     </div>
     <?php
 }
