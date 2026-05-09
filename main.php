@@ -190,6 +190,15 @@ function woocommerce_membership_setting_page()
                             <td>ลูกค้าจะได้รับ 1 คะแนนต่อการซื้อ</td>
                             <td><input type="text" name="membership_point_per_baht" value="<?=get_option('membership_point_per_baht', 500);?>"> บาท</td>
                         </tr>
+                        <tr>
+                            <td>เลือกรับสินค้าเองจะไม่ได้รับส่วนลดตามระดับ</td>
+                            <td>
+                                <select name="no_discount_self_pickup" id="">
+                                    <option value="yes" <?php selected(get_option('no_discount_self_pickup'), 'yes') ?>>ใช่</option>
+                                    <option value="no" <?php selected(get_option('no_discount_self_pickup'), 'no') ?>>ไม่ใช่</option>
+                                </select>
+                            </td>
+                        </tr>
                     </table>
                     <table class="wp-list-table widefat fixed striped" style="margin-top: 20px;">
                         <thead>
@@ -495,6 +504,7 @@ function membership_tier_settings_init()
     // Silver
     register_setting('membership_settings_group_member_privilege', 'ms_silver_score');
     register_setting('membership_settings_group_member_privilege', 'ms_silver_discount');
+    register_setting('membership_settings_group_member_privilege', 'no_discount_self_pickup');
 
     //Member Privileges Discount
     register_setting('membership_settings_group_special_offers', 'membership_enable_member_privileges');
@@ -719,6 +729,14 @@ function apply_tier_discount_based_on_score($cart)
         return; // ถ้าเป็น Guest ไม่ได้ส่วนลด
 
     global $wpdb;
+
+    $chosen_methods = WC()->session->get('chosen_shipping_methods');
+    
+    if(get_option('no_discount_self_pickup', "yes") == "yes") {
+        if (isset($chosen_methods[0]) && strpos($chosen_methods[0], '_selfpickup') !== false) {
+            return;
+        }
+    }
 
     // ดึงคะแนนจากคอลัมน์ score ในตาราง wpln_users
     $score = (int) $wpdb->get_var($wpdb->prepare(
