@@ -11,9 +11,9 @@ if (!defined('ABSPATH'))
     exit;
 
 //Install Menu.
-add_action('admin_menu', 'worldchem_membership_menu');
+add_action('admin_menu', 'membership_menu');
 
-function worldchem_membership_menu()
+function membership_menu()
 {
     add_menu_page(
         'Membership Settings', // Title ของหน้า
