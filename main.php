@@ -206,7 +206,8 @@ function woocommerce_membership_setting_page()
                                 <th>ระดับสมาชิก (Membership Level)</th>
                                 <th>คะแนนขั้นต่ำ (Minimum Score)</th>
                                 <th>ลดเป็นจำนวนร้อยละ (Discount Percentage)</th>
-                                <th>สีที่ใช้แสดงในระบบ</th>
+                                <th>สีที่ใช้แสดงในระบบ (Gradients)</th>
+                                <th>สีที่ใช้แสดงในระบบ (single)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -218,6 +219,8 @@ function woocommerce_membership_setting_page()
                                         value="<?php echo esc_attr(get_option('ms_platinum_discount', 3)); ?>" /> %</td>
                                 <td><input type="text" name="member-privileges-platinum-color"
                                         value="<?php echo esc_attr(get_option('member-privileges-platinum-color')); ?>" /></td>
+                                <td><input type="text" name="member-privileges-platinum-single-color"
+                                        value="<?php echo esc_attr(get_option('member-privileges-platinum-single-color')); ?>" /></td>
                             </tr>
                             <tr>
                                 <td><strong>Gold Membership</strong></td>
@@ -227,6 +230,8 @@ function woocommerce_membership_setting_page()
                                         value="<?php echo esc_attr(get_option('ms_gold_discount', 2)); ?>" /> %</td>
                                 <td><input type="text" name="member-privileges-gold-color"
                                         value="<?php echo esc_attr(get_option('member-privileges-gold-color')); ?>" /></td>
+                                <td><input type="text" name="member-privileges-gold-single-color"
+                                        value="<?php echo esc_attr(get_option('member-privileges-gold-single-color')); ?>" /></td>
                             </tr>
                             <tr>
                                 <td><strong>Silver Membership</strong></td>
@@ -236,6 +241,8 @@ function woocommerce_membership_setting_page()
                                         value="<?php echo esc_attr(get_option('ms_silver_discount', 1)); ?>" /> %</td>
                                 <td><input type="text" name="member-privileges-silver-color"
                                         value="<?php echo esc_attr(get_option('member-privileges-silver-color')); ?>" /></td>
+                                <td><input type="text" name="member-privileges-silver-single-color"
+                                        value="<?php echo esc_attr(get_option('member-privileges-silver-single-color')); ?>" /></td>
                             </tr>
                         </tbody>
                     </table>
@@ -525,6 +532,10 @@ function membership_tier_settings_init()
     register_setting('membership_settings_group_member_privilege', 'member-privileges-gold-color');
     register_setting('membership_settings_group_member_privilege', 'member-privileges-platinum-color');
 
+    register_setting('membership_settings_group_member_privilege', 'member-privileges-silver-single-color');
+    register_setting('membership_settings_group_member_privilege', 'member-privileges-gold-single-color');
+    register_setting('membership_settings_group_member_privilege', 'member-privileges-platinum-single-color');
+
     //Brand Privileges
     register_setting('membership_settings_group_brands_privilege', 'brands_privilege_enable');
     register_setting('membership_settings_group_brands_privilege', 'brands_privilege_list');
@@ -608,9 +619,9 @@ function display_customer_points()
 
     // กำหนดสีตามช่วงคะแนน
     $bar_color = '#CCC';
-    if ($points > 0) $bar_color = esc_attr(get_option('member-privileges-silver-color')); // Silver
-    if ($points >= 10) $bar_color = esc_attr(get_option('member-privileges-gold-color')); // Gold
-    if ($points >= 20) $bar_color = esc_attr(get_option('member-privileges-platinum-color')); // Platinum
+    if ($points > 0) $bar_color = esc_attr(get_option('member-privileges-silver-single-color')); // Silver
+    if ($points >= 10) $bar_color = esc_attr(get_option('member-privileges-gold-single-color')); // Gold
+    if ($points >= 20) $bar_color = esc_attr(get_option('member-privileges-platinum-single-color')); // Platinum
     ?>
     <style>
         .progress-fill {
@@ -1361,4 +1372,106 @@ function display_combined_addon_and_tiered_discount() {
         </div>
         <?php
     }
+}
+
+add_action('wp_footer', 'add_level_color_to_user_icon');
+
+function add_level_color_to_user_icon() {
+    if (!is_user_logged_in())
+        return;
+    ?>
+    <style>
+        .level_color {
+            padding: 10px 8px;
+            border-radius: 20px;
+        }
+        .silver.level_color {
+            color: <?=get_option('member-privileges-silver-single-color')?>;
+        }
+        .gold.level_color {
+            color: <?=get_option('member-privileges-gold-single-color')?>;   
+        }
+        .platinum.level_color {
+            color: <?=get_option('member-privileges-platinum-single-color')?>;
+        }
+        .silver.level_color:hover {
+            color: <?=get_option('member-privileges-silver-single-color')?> !important;
+        }
+        .gold.level_color:hover {
+            color: <?=get_option('member-privileges-gold-single-color')?> !important;
+        }
+        .platinum.level_color:hover {
+            color: <?=get_option('member-privileges-platinum-single-color')?> !important;
+        }
+        .user-level-badge {
+            width: 65px;
+            position: absolute;
+            left: -11px;
+            font-size: 11px;
+            text-align: center;
+            color: #fff;
+            border-radius: 10px;
+            text-transform: capitalize;
+        }
+        .silver.user-level-badge {
+            background: <?=get_option('member-privileges-silver-color')?>;
+        }
+        .gold.user-level-badge {
+            background: <?=get_option('member-privileges-gold-color')?>;
+        }
+        .platinum.user-level-badge {
+            background: <?=get_option('member-privileges-platinum-color')?>;
+        }
+    </style>
+    <script type="text/javascript">
+        (function($){
+            var target = $('.bwp-header .block-top-link > .widget .widget-custom-menu .widget-title');
+            <?php 
+            if(getUserLevel('name') == 'silver') {
+            ?>
+            target.addClass('level_color');
+            target.addClass('silver');
+            <?php
+            }
+            ?>
+            <?php 
+            if(getUserLevel('name') == 'gold') {
+            ?>
+            target.addClass('level_color');
+            target.addClass('gold');
+            <?php
+            }
+            ?>
+            <?php 
+            if(getUserLevel('name') == 'platinum') {
+            ?>
+            target.addClass('level_color');
+            target.addClass('platinum');
+            <?php
+            }
+            ?>
+        })(jQuery);
+
+        (function($){
+            var target = $('.bwp-header .block-top-link > .widget .widget-custom-menu');
+            
+            var span = $('<span class="user-level-badge <?=getUserLevel('name')?>"></span>').text("<?=getUserLevel('name')?>");
+            
+            target.append(span);
+        })(jQuery);
+    </script>
+    <?php
+}
+
+add_filter('nav_menu_item_title', 'add_level_text_to_user_icon', 10, 4);
+
+function add_level_text_to_user_icon($title, $item, $args, $depth) {
+    if (!is_user_logged_in())
+        return $title;
+    
+    if (isset($args->container_class) && strpos($args->container_class, 'block-top-link') !== false) {
+        $title .= ' <span class="custom-badge">'.getUserLevel('name').'</span>';
+    }
+    
+    return $title;
 }
