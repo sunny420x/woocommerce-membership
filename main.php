@@ -477,6 +477,14 @@ function woocommerce_membership_setting_page()
                         'status' => ['wc-completed', 'wc-processing']
                     );
 
+                    //Filter Params
+                    if (isset($_GET['from']) && isset($_GET['to'])) {
+                        $from = sanitize_text_field($_GET['from']);
+                        $to   = sanitize_text_field($_GET['to']);
+                        
+                        $args['date_created'] = $from . '...' . $to;
+                    }
+
                     $orders = wc_get_orders($args);
                     $privilege_orders = [];
 
@@ -502,6 +510,14 @@ function woocommerce_membership_setting_page()
                 ?>
                 <h1>จำนวนผู้ใช้สิทธิพิเศษ (<?=count($privilege_orders)?> คำสั่งซื้อ)</h1>
                 <div style="padding: 25px;">
+                    จากวันที่: <input type="date" name="from_filter" id="from_filter" value="<?=$_GET['from'] ?? '' ?>">
+                    ถึงวันที่: <input type="date" name="to_filter" id="to_filter" value="<?=$_GET['to'] ?? '' ?>">
+                    <button class="button" onclick="applyFilter(document.getElementById('from_filter').value, document.getElementById('to_filter').value)">กรอง</button>
+                    <script>
+                        function applyFilter(from, to) {
+                            window.location.href=`admin.php?page=woocommerce-membership-settings&option=statistic&from=${from}&to=${to}`;
+                        }
+                    </script>
                     <?php
                     $combined = [];
                     foreach ($privilege_orders as $row) {
