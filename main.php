@@ -575,6 +575,7 @@ function woocommerce_membership_setting_page()
                             <p style="font-size: 24px; font-weight: bold; color: #d63638;"><?= number_format($total_discount, 2) ?> บาท</p>
                         </div>
                     </div>
+                    <h2>ประวัติการใช้ Member Privilege</h2>
                     <table class="wp-list-table widefat fixed striped">
                         <thead>
                             <th>หมายเลขคำสั่งซื้อ</th>
@@ -597,6 +598,43 @@ function woocommerce_membership_setting_page()
                             </tr>
                             <?php
                                 }
+                            ?>
+                        </tbody>
+                    </table>
+                    <h2>ประวัติการแลกคะแนนเป็นส่วนลด</h2>
+                    <table class="wp-list-table widefat fixed striped">
+                        <thead>
+                            <th>#</th>
+                            <th>User ID</th>
+                            <th>Username</th>
+                            <th>Coupon Code</th>
+                            <th>คะแนนที่แลก</th>
+                            <th>เท่ากับ</th>
+                            <th>แลกเมื่อ</th>
+                            <th>สถานะ</th>
+                        </thead>
+                        <tbody>
+                            <?php
+                            global $wpdb;
+                            $redeem_history_table = $wpdb->prefix . "redeem_history";
+                            $user_table = $wpdb->users;
+                            $redeem_history = $wpdb->get_results("SELECT r.id, u.display_name, r.coupon_code, r.points_used, r.status, r.created_at, r.user_id 
+                            FROM $redeem_history_table as r JOIN $user_table as u ON u.ID = r.user_id ORDER BY r.created_at DESC");
+
+                            foreach($redeem_history as $row) {
+                            ?>
+                            <tr>
+                                <td><?=$row->id?></td>
+                                <td><?=$row->user_id?></td>
+                                <td><?=$row->display_name?></td>
+                                <td><?=$row->coupon_code?></td>
+                                <td><?=$row->points_used?></td>
+                                <td><?=($row->points_used / (int)get_option("membership_baht_per_point"))?> บาท</td>
+                                <td><?=$row->created_at?></td>
+                                <td><?php if($row->status == "unused") { echo "<span style='color: red;'>ยังไม่ถูกใช้งาน</span>"; } else { echo "<span style='color: green;'>ใช้งานแล้ว</span>"; } ?></td>
+                            </tr>
+                            <?php
+                            }
                             ?>
                         </tbody>
                     </table>
