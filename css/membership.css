@@ -98,6 +98,7 @@
     color: #fff;
     transition: .2s ease-in-out;
     cursor: pointer;
+    opacity: 0.2;
 }
 
 .membership-description .card p {
@@ -106,6 +107,10 @@
 
 .membership-description .card:hover {
     opacity: 1 !important;
+}
+
+.membership-description .card.active {
+    opacity: 1;
 }
 
 .membership-description .card .card_header {
@@ -215,8 +220,12 @@
         position: static;
         width: 80%;
         margin: 20px auto 0 auto;
+        display: none;
     }
     .membership-description .card::after {
         display: none;
+    }
+    .membership-description .card.active {
+        display: block;
     }
 }
