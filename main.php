@@ -923,6 +923,38 @@ function display_customer_points()
                                 </div>
                             </div>
                         </div>
+                        <div class="row privilege_card_group" style="gap: 10px;">
+                            <?php
+                            if(get_option('membership_enable_member_privileges', 'no') === "yes") {
+                            ?>
+                            <div class="col-lg-3 col-4 privilege_card cursor-pointer" onclick="window.location.href='/product-category/member-privileges/'">
+                                <h2>🎉 ซื้อสินค้าในราคาพิเศษ</h2>
+                                <p>ซื้อสินค้าที่ร่วมรายการในราคาพิเศษ สำหรับสมาชิก</p>
+                            </div>
+                            <?php
+                            }
+                            ?>
+                            <?php
+                            if(get_option('brands_privilege_enable', 'no') == 'yes') {
+                            ?>
+                            <div class="col-lg-3 col-4 privilege_card">
+                                <h2>🏆 Brands Privilege</h2>
+                                <p>ซื้อสินค้าจากแบรนด์ที่ร่วมรายการในราคาพิเศษ</p>
+                            </div>
+                            <?php
+                            }
+                            ?>
+                            <?php
+                            if(get_option('membership_enable_redeem', 'no') == 'yes') {
+                            ?>
+                            <div class="col-lg-3 col-4 privilege_card">
+                                <h2>✨ แลกคะแนนเป็นส่วนลด</h2>
+                                <p>แลกคะแนนจากการซื้อสินค้าเป็นส่วนลดสำหรับการซื้อครั้งหน้า</p>
+                            </div>
+                            <?php
+                            }
+                            ?>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1024,7 +1056,7 @@ function redeem_form_in_my_account()
             </div>
             <div id="redeemAccordion" class="collapse show" data-parent="#redeem">
                 <div class="card-body">
-                    <div class="redeem-container" style="background:#fff; padding:25px; margin-bottom:30px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
+                    <div class="redeem-container" style="background:#fff; padding:25px; margin-bottom:30px;">
                         <p style="color:#666; font-size:14px;">คะแนนปัจจุบัน: <strong id="current-user-score"
                                 style="color:#27ae60; font-size:18px;"><?php echo number_format($score); ?></strong> คะแนน (1 คะแนน = <?=number_format(get_option('membership_baht_per_point', 1));?> บาท)
                         </p>

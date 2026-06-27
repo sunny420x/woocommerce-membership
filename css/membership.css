@@ -33,7 +33,6 @@
     margin-bottom: 30px;
     padding: 20px;
     background: #fff;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 .points-header {
@@ -206,6 +205,32 @@
     border-width: 8px;
     border-style: solid;
     filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.05));
+}
+
+.privilege_card_group {
+    padding: 20px 0;
+}
+
+.privilege_card h2 {
+    color: #333;
+    font-weight: 500;
+    padding: 5px 0;
+    margin: 0;
+}
+
+.privilege_card p {
+    color: #555;
+}
+
+.privilege_card {
+    border-radius: 20px;
+    transition: 0.2s ease-in-out;
+    background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+}
+
+.privilege_card.cursor-pointer {
+    cursor: pointer;
+    user-select: none;
 }
 
 @media screen and (max-width: 768px) {
