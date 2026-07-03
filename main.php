@@ -881,18 +881,18 @@ function display_customer_points()
                                 <span class="points-value" id="user_score"><?php echo number_format($points); ?></span> <small>คะแนน</small>
                             </div>
                             <div style="text-align: right; font-size: 14px; color: #aaa;"><?php
-                                    if($points < get_option('ms_silver_score', 10)) echo "อีก " . (10 - $points) . " คะแนนเพื่อเป็นระดับ Silver และรับส่วนลด 1% เมื่อซื้อสินค้าผ่านเว็บไซต์";
-                                    elseif($points < get_option('ms_gold_score', 20)) echo "อีก " . (20 - $points) . " คะแนนเพื่อเป็นระดับ Gold และรับส่วนลด 2% เมื่อซื้อสินค้าผ่านเว็บไซต์";
-                                    elseif($points < get_option('ms_platinum_score', 30)) echo "อีก " . (30 - $points) . " คะแนนเพื่อเป็นระดับ Platinum และรับส่วนลด 3% เมื่อซื้อสินค้าผ่านเว็บไซต์";
+                                    if($points < get_option('ms_silver_score')) echo "อีก " . (10 - $points) . " คะแนนเพื่อเป็นระดับ Silver และรับส่วนลด 1% เมื่อซื้อสินค้าผ่านเว็บไซต์";
+                                    elseif($points < get_option('ms_gold_score')) echo "อีก " . (20 - $points) . " คะแนนเพื่อเป็นระดับ Gold และรับส่วนลด 2% เมื่อซื้อสินค้าผ่านเว็บไซต์";
+                                    elseif($points < get_option('ms_platinum_score')) echo "อีก " . (30 - $points) . " คะแนนเพื่อเป็นระดับ Platinum และรับส่วนลด 3% เมื่อซื้อสินค้าผ่านเว็บไซต์";
                                     else echo "คุณอยู่ในระดับ Platinum เรียบร้อยแล้ว!";
                             ?></div></div>
                         <div class="progress-track">
                             <div class="progress-fill" style="width: <?php echo $percentage; ?>%;"></div>
                             <div class="milestones">
                                 <div class="dot active"><span class="dot-label">0</span></div>
-                                <div class="dot <?php echo ($points >= get_option('ms_silver_score', 10)) ? 'active' : ''; ?>" style="left: 33.33%; position: absolute;"><span class="dot-label"><?=get_option('ms_silver_score', 30)?></span></div>
-                                <div class="dot <?php echo ($points >= get_option('ms_gold_score', 20)) ? 'active' : ''; ?>" style="left: 66.66%; position: absolute;"><span class="dot-label"><?=get_option('ms_gold_score', 30)?></span></div>
-                                <div class="dot <?php echo ($points >= get_option('ms_platinum_score', 30)) ? 'active' : ''; ?>" style="right: 0; position: absolute;"><span class="dot-label"><?=get_option('ms_platinum_score', 30)?>+</span></div>
+                                <div class="dot <?php echo ($points >= get_option('ms_silver_score')) ? 'active' : ''; ?>" style="left: 33.33%; position: absolute;"><span class="dot-label"><?=get_option('ms_silver_score')?></span></div>
+                                <div class="dot <?php echo ($points >= get_option('ms_gold_score')) ? 'active' : ''; ?>" style="left: 66.66%; position: absolute;"><span class="dot-label"><?=get_option('ms_gold_score')?></span></div>
+                                <div class="dot <?php echo ($points >= get_option('ms_platinum_score')) ? 'active' : ''; ?>" style="right: 0; position: absolute;"><span class="dot-label"><?=get_option('ms_platinum_score')?>+</span></div>
                             </div>
                         </div>
                         <div class="membership-description">
