@@ -830,16 +830,15 @@ function display_customer_points()
         $user_id
     ));
 
-    // คำนวณความกว้างของ Progress Bar (สมมติเป้าหมายสูงสุดที่ 30 คะแนน)
-    $max_points = 30;
+    $max_points = (int) get_option('ms_platinum_score');
     $percentage = ($points / $max_points) * 100;
     if ($percentage > 100) $percentage = 100;
 
     // กำหนดสีตามช่วงคะแนน
     $bar_color = '#CCC';
     if ($points > 0) $bar_color = esc_attr(get_option('member-privileges-silver-single-color')); // Silver
-    if ($points >= 10) $bar_color = esc_attr(get_option('member-privileges-gold-single-color')); // Gold
-    if ($points >= 20) $bar_color = esc_attr(get_option('member-privileges-platinum-single-color')); // Platinum
+    if ($points >= (int) get_option('ms_gold_score')) $bar_color = esc_attr(get_option('member-privileges-gold-single-color')); // Gold
+    if ($points >= (int) get_option('ms_platinum_score')) $bar_color = esc_attr(get_option('member-privileges-platinum-single-color')); // Platinum
     ?>
     <style>
         .progress-fill {
