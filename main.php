@@ -857,15 +857,15 @@ function display_customer_points()
         }
         #description-platinum {
             background: <?php echo esc_attr(get_option('member-privileges-platinum-color')); ?>;
-            background: linear-gradient(0deg,rgba(162, 22, 46, 1) 0%, rgba(162, 22, 46, 1) 50%, rgba(110, 27, 27, 1) 100%);
+            /* background: linear-gradient(0deg,rgba(162, 22, 46, 1) 0%, rgba(162, 22, 46, 1) 50%, rgba(110, 27, 27, 1) 100%); */
         }
         #description-gold {
             background: <?php echo esc_attr(get_option('member-privileges-gold-color')); ?>;
-            background: linear-gradient(0deg,rgba(193, 172, 81, 1) 0%, rgba(193, 172, 81, 1) 56%, rgba(158, 138, 40, 1) 100%);
+            /* background: linear-gradient(0deg,rgba(193, 172, 81, 1) 0%, rgba(193, 172, 81, 1) 56%, rgba(158, 138, 40, 1) 100%); */
         }
         #description-silver {
             background: <?php echo esc_attr(get_option('member-privileges-silver-color')); ?>;
-            background: linear-gradient(0deg,rgba(87, 86, 86, 1) 0%, rgba(140, 137, 137, 1) 56%, rgba(179, 179, 179, 1) 100%);
+            /* background: linear-gradient(0deg,rgba(87, 86, 86, 1) 0%, rgba(140, 137, 137, 1) 56%, rgba(179, 179, 179, 1) 100%); */
         }
     </style>
     <div class="accordion" id="membership">
@@ -881,9 +881,9 @@ function display_customer_points()
                                 <span class="points-value" id="user_score"><?php echo number_format($points); ?></span> <small>คะแนน</small>
                             </div>
                             <div style="text-align: right; font-size: 14px; color: #aaa;"><?php
-                                    if($points < get_option('ms_silver_score')) echo "อีก " . (10 - $points) . " คะแนนเพื่อเป็นระดับ Silver และรับส่วนลด 1% เมื่อซื้อสินค้าผ่านเว็บไซต์";
-                                    elseif($points < get_option('ms_gold_score')) echo "อีก " . (20 - $points) . " คะแนนเพื่อเป็นระดับ Gold และรับส่วนลด 2% เมื่อซื้อสินค้าผ่านเว็บไซต์";
-                                    elseif($points < get_option('ms_platinum_score')) echo "อีก " . (30 - $points) . " คะแนนเพื่อเป็นระดับ Platinum และรับส่วนลด 3% เมื่อซื้อสินค้าผ่านเว็บไซต์";
+                                    if($points < get_option('ms_silver_score')) echo "อีก " . ((int) get_option('ms_silver_score') - $points) . " คะแนนเพื่อเป็นระดับ Silver และรับส่วนลด 1% เมื่อซื้อสินค้าผ่านเว็บไซต์";
+                                    elseif($points < get_option('ms_gold_score')) echo "อีก " . ((int) get_option('ms_gold_score') - $points) . " คะแนนเพื่อเป็นระดับ Gold และรับส่วนลด 2% เมื่อซื้อสินค้าผ่านเว็บไซต์";
+                                    elseif($points < get_option('ms_platinum_score')) echo "อีก " . ((int) get_option('ms_platinum_score') - $points) . " คะแนนเพื่อเป็นระดับ Platinum และรับส่วนลด 3% เมื่อซื้อสินค้าผ่านเว็บไซต์";
                                     else echo "คุณอยู่ในระดับ Platinum เรียบร้อยแล้ว!";
                             ?></div></div>
                         <div class="progress-track">
