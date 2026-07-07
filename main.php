@@ -887,7 +887,7 @@ function display_customer_points()
                                     else echo "คุณอยู่ในระดับ Platinum เรียบร้อยแล้ว!";
                             ?></div></div>
                         <div class="progress-track">
-                            <div class="progress-fill" style="width: <?php echo $percentage; ?>%;"></div>
+                            <div class="progress-fill" style="width: <?=round($percentage);?>%;"></div>
                             <div class="milestones">
                                 <div class="dot active"><span class="dot-label">0</span></div>
                                 <div class="dot <?php echo ($points >= get_option('ms_silver_score')) ? 'active' : ''; ?>" style="left: 33.33%; position: absolute;"><span class="dot-label"><?=get_option('ms_silver_score')?></span></div>
