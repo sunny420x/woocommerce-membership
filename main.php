@@ -106,6 +106,9 @@ function woocommerce_membership_setting_page()
             width: 100%;
             text-decoration: none;
         }
+        .leftside a.active {
+            background: #fff;
+        }
         .leftside a:hover {
             background: #fff;
             cursor: pointer;
@@ -149,12 +152,12 @@ function woocommerce_membership_setting_page()
         <div style="display: flex;">
             <div class="leftside">
                 <h1>WooCommerce Membership</h1>
-                <a href="/wp-admin/admin.php?page=woocommerce-membership-settings&option=statistic">📊 สถิติการใช้งาน</a>
-                <a href="/wp-admin/admin.php?page=woocommerce-membership-settings&option=member_privilege">🏆 คะแนนและระดับของสมาชิก</a>
-                <a href="/wp-admin/admin.php?page=woocommerce-membership-settings&option=redeem_from_score">🏷️ แลกคะแนนเป็นส่วนลด</a>
-                <a href="/wp-admin/admin.php?page=woocommerce-membership-settings&option=special_offers">🎁 ส่วนลดสำหรับสินค้าพิเศษ</a>
-                <a href="/wp-admin/admin.php?page=woocommerce-membership-settings&option=brands_privilege">🤝 ส่วนลดสำหรับ Brand พิเศษ</a>
-                <a href="/wp-admin/admin.php?page=woocommerce-membership-settings&option=members">👥 สมาชิกทั้งหมด</a>
+                <a href="/wp-admin/admin.php?page=woocommerce-membership-settings&option=statistic" <?php if(isset($_GET['option']) && $_GET['option'] == "statistic") { echo "class='active'"; }?>>📊 สถิติการใช้งาน</a>
+                <a href="/wp-admin/admin.php?page=woocommerce-membership-settings&option=member_privilege" <?php if(isset($_GET['option']) && $_GET['option'] == "member_privilege") { echo "class='active'"; }?>>🏆 คะแนนและระดับของสมาชิก</a>
+                <a href="/wp-admin/admin.php?page=woocommerce-membership-settings&option=redeem_from_score" <?php if(isset($_GET['option']) && $_GET['option'] == "redeem_from_score") { echo "class='active'"; }?>>🏷️ แลกคะแนนเป็นส่วนลด</a>
+                <a href="/wp-admin/admin.php?page=woocommerce-membership-settings&option=special_offers" <?php if(isset($_GET['option']) && $_GET['option'] == "special_offers") { echo "class='active'"; }?>>🎁 ส่วนลดสำหรับสินค้าพิเศษ</a>
+                <a href="/wp-admin/admin.php?page=woocommerce-membership-settings&option=brands_privilege" <?php if(isset($_GET['option']) && $_GET['option'] == "brands_privilege") { echo "class='active'"; }?>>🤝 ส่วนลดสำหรับ Brand พิเศษ</a>
+                <a href="/wp-admin/admin.php?page=woocommerce-membership-settings&option=members" <?php if(isset($_GET['option']) && $_GET['option'] == "members") { echo "class='active'"; }?>>👥 สมาชิกทั้งหมด</a>
             </div>
             <div class="container">
                 <?php
