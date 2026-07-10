@@ -514,7 +514,6 @@ function woocommerce_membership_setting_page()
                             $fee_name = $item->get_name();
                             $order_date = $order->get_date_created()->date('Y-m-d');
                             
-                            // เช็คชื่อ Fee ให้ตรงกับที่มึงแอดไว้ (แนะนำให้เช็คด้วย strpos กันเหนียว)
                             if (strpos($fee_name, 'ส่วนลดพิเศษ: Brand Privilege') !== false) {
                                 $privilege_orders[] = [
                                     'order_id' => $order->get_id(),
@@ -1579,8 +1578,6 @@ function apply_tiered_brand_discount($cart) {
     if ($discount_percent > 0) {
         $discount_total = ($eligible_amount * $discount_percent) / 100;
         
-        // เพิ่มบรรทัดส่วนลดเข้าไป (ยอดติดลบ)
-        // ใส่ชื่อแบรนด์รวมๆ หรือระบุว่า Discount ก็ได้ครับ
         $cart->add_fee(
             "ส่วนลดพิเศษ: Brand Privilege ($discount_percent%)", 
             -$discount_total, 
