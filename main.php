@@ -442,6 +442,32 @@ function woocommerce_membership_setting_page()
                 </form>
                 <?php
                 } elseif(isset($_GET['option']) && $_GET['option'] == "members") {
+                    if(isset($_GET['id']) && !empty($_GET['id'])) {
+                        global $wpdb;
+                        $id = sanitize_text_field($_GET['id']);
+                        
+                        if(isset($_POST['updateUserScore'])) {
+                            $score = sanitize_text_field( $_POST['score'] );
+
+                            $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}users SET score = %d WHERE ID = %d", $score, $id));
+                            wp_redirect("admin.php?page=woocommerce-membership-settings&option=members&id=$id");
+                            exit();
+                        }
+
+                        $selected_user = $wpdb->get_row($wpdb->prepare("SELECT display_name,user_email,ID,score FROM {$wpdb->prefix}users WHERE id = %d", $id));
+                    ?>
+                    <h1><a class="button button-primary button-small" href="admin.php?page=woocommerce-membership-settings&option=members" style="margin-right: 10px;">X</a>จัดการคะแนนของ <?=$selected_user->display_name?></h1>
+                    <div style="padding: 25px 25px 25px 25px;">
+                        <form action="" method="post">
+                            <label for="score">คะแนน:</label><br>
+                            <input type="number" name="score" value="<?=$selected_user->score?>">
+                            <br>
+                            <br>
+                            <input type="submit" value="บันทึกการเปลี่ยนแปลง" name="updateUserScore" class="button button-outline-primary">
+                        </form>
+                    </div>
+                    <?php
+                    }
                 ?>
                 <?php
                 function getMemberShipLevel($score)
@@ -463,10 +489,11 @@ function woocommerce_membership_setting_page()
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>ชื่อที่แสดงในระบบ (Display Name)</th>
+                                <th>Display Name</th>
                                 <th>อีเมล์ (Email)</th>
                                 <th>คะแนนปัจจุบัน (Score)</th>
                                 <th>ระดับสมาชิก</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -483,6 +510,7 @@ function woocommerce_membership_setting_page()
                                             target="_blank"><?= $row->user_email; ?></a></td>
                                     <td><?= $row->score; ?></td>
                                     <td><?= getMemberShipLevel($row->score); ?></td>
+                                    <td><a class="button button-outline-primary" href="admin.php?page=woocommerce-membership-settings&option=members&id=<?= $row->ID; ?>">จัดการ</a></td>
                                 </tr>
                                 <?php
                             }
