@@ -848,10 +848,90 @@ function add_points_after_purchase($order_id)
     }
 }
 
-// แสดงคะแนนในหน้า My Account ของลูกค้า
-add_action('woocommerce_before_my_account', 'display_customer_points');
+Class MembershipCard {
+    private $min_point;
+    private $max_point;
+    private $title;
+    private $description;
+    private $background;
+    private $slug;
+    public function getMinPoints() {
+        return $this->min_point;
+    }
+    public function getMaxPoints() {
+        return $this->max_point;
+    }
+    public function getTitle() {
+        return $this->title;
+    }
+    public function getDescriptionTitle() {
+        return $this->description;
+    }
+    public function getDescription() {
+        return $this->description_content;
+    }
+    public function getBackground() {
+        return $this->background;
+    }
+    public function getColor() {
+        return $this->color;
+    }
+    public function getSlug() {
+        return $this->slug;
+    }
 
-function display_customer_points()
+    public function __construct(string $min_point, float $max_point, string $title, string $description, string $description_content, string $background, string $color, string $slug) {
+        $this->min_point = $min_point;
+        $this->max_point = $max_point;
+        $this->title = $title;
+        $this->description = $description;
+        $this->description_content = $description_content;
+        $this->background = $background;
+        $this->color = $color;
+        $this->slug = $slug;
+    }
+}
+$membership_array = array();
+// Silver
+$membership_array[] = new MembershipCard(
+    (float) get_option('ms_silver_score'), 
+    (float) get_option('ms_gold_score'),
+    get_option('ms_card_title'),
+    get_option('ms_silver_description_title'),
+    get_option('ms_silver_description_content'),
+    get_option('member-privileges-silver-color'),
+    get_option('member-privileges-silver-single-color'),
+    "silver"
+);
+
+//Gold
+$membership_array[] = new MembershipCard(
+    (float) get_option('ms_gold_score'), 
+    (float) get_option('ms_platinum_score'),
+    get_option('ms_card_title'),
+    get_option('ms_gold_description_title'),
+    get_option('ms_gold_description_content'),
+    get_option('member-privileges-gold-color'),
+    get_option('member-privileges-gold-single-color'),
+    "gold"
+);
+
+//Platinum
+$membership_array[] = new MembershipCard(
+    (float) get_option('ms_platinum_score'), 
+    0,
+    get_option('ms_card_title'),
+    get_option('ms_platinum_description_title'),
+    get_option('ms_platinum_description_content'),
+    get_option('member-privileges-platinum-color'),
+    get_option('member-privileges-platinum-single-color'),
+    "platinum"
+);
+add_action('woocommerce_before_my_account', function() use ($membership_array) {
+    display_customer_points($membership_array);
+});
+
+function display_customer_points($membership_array)
 {
     $user_id = get_current_user_id();
     global $wpdb;
@@ -885,18 +965,15 @@ function display_customer_points()
             font-weight: bold;
             color: <?php echo $bar_color;?>;
         }
-        #description-platinum {
-            background: <?php echo esc_attr(get_option('member-privileges-platinum-color')); ?>;
-            /* background: linear-gradient(0deg,rgba(162, 22, 46, 1) 0%, rgba(162, 22, 46, 1) 50%, rgba(110, 27, 27, 1) 100%); */
+        <?php
+        foreach($membership_array as $membership) {
+        ?>
+        #description-<?=$membership->getSlug()?> {
+            background: <?=$membership->getBackground()?>;
         }
-        #description-gold {
-            background: <?php echo esc_attr(get_option('member-privileges-gold-color')); ?>;
-            /* background: linear-gradient(0deg,rgba(193, 172, 81, 1) 0%, rgba(193, 172, 81, 1) 56%, rgba(158, 138, 40, 1) 100%); */
+        <?php
         }
-        #description-silver {
-            background: <?php echo esc_attr(get_option('member-privileges-silver-color')); ?>;
-            /* background: linear-gradient(0deg,rgba(87, 86, 86, 1) 0%, rgba(140, 137, 137, 1) 56%, rgba(179, 179, 179, 1) 100%); */
-        }
+        ?>
     </style>
     <div class="accordion" id="membership">
         <div class="card">
@@ -926,39 +1003,33 @@ function display_customer_points()
                             </div>
                         </div>
                         <div class="membership-description">
-                            <div class="card <?php if($points >= get_option('ms_silver_score', 10) && $points < get_option('ms_gold_score', 20)) { echo 'active'; } ?>" id="description-silver" style="left: 0%;">
+                            <?php
+                            foreach($membership_array as $membership) {
+                                if($membership->getMaxPoints() != 0) {
+                            ?>
+                                <div class="card <?php if($points >= $membership->getMinPoints() && $points < $membership->getMaxPoints()) { echo 'active'; } ?>" id="description-<?=$membership->getSlug()?>" style="left: 0%;">
+                            <?php
+                                } else {
+                            ?>
+                                <div class="card <?php if($points >= $membership->getMinPoints()) { echo 'active'; } ?>" id="description-<?=$membership->getSlug()?>" style="left: 0%;">
+                            <?php
+                                }
+                            ?>
                                 <div class="card_header">
-                                    <span class="card_logo"><?=get_option('ms_card_title');?></span>
-                                    <h2 id="silver"><?=get_option('ms_silver_description_title');?></h2>
+                                    <span class="card_logo"><?=$membership->getTitle()?></span>
+                                    <h2 id="<?=$membership->getSlug()?>"><?=$membership->getDescriptionTitle();?></h2>
                                 </div>
                                 <span class="display_name"><?=wp_get_current_user()->display_name?></span><span class="card_number">1155 1854 7745</span>
-                                <?=get_option('ms_silver_description_content');?>
+                                <?php
+                                echo $membership->getDescription();
+                                ?>
                                 <div class="card_points">
-                                    <span class="points"><?=get_option('ms_silver_score', 10)?></span><span class="text">Points</span>
+                                    <span class="points"><?=$membership->getMinPoints()?></span><span class="text">Points</span>
                                 </div>
                             </div>
-                            <div class="card <?php if($points >= get_option('ms_gold_score', 20) && $points < get_option('ms_platinum_score', 30)) { echo 'active'; } ?>" id="description-gold" style="left: 0%;">
-                                <div class="card_header">
-                                    <span class="card_logo"><?=get_option('ms_card_title');?></span>
-                                    <h2 id="gold"><?=get_option('ms_gold_description_title');?></h2>
-                                </div>
-                                <span class="display_name"><?=wp_get_current_user()->display_name?></span><span class="card_number">1155 1854 7745</span>
-                                <?=get_option('ms_gold_description_content');?>
-                                <div class="card_points">
-                                    <span class="points"><?=get_option('ms_gold_score', 20)?></span><span class="text">Points</span>
-                                </div>
-                            </div>
-                            <div class="card <?php if($points >= get_option('ms_platinum_score', 30)) { echo 'active'; } ?>" id="description-platinum" style="left: 0%;">
-                                <div class="card_header">
-                                    <span class="card_logo"><?=get_option('ms_card_title');?></span>
-                                    <h2 id="platinum"><?=get_option('ms_platinum_description_title');?></h2>
-                                </div>
-                                <span class="display_name"><?=wp_get_current_user()->display_name?></span><span class="card_number">1155 1854 7745</span>
-                                <?=get_option('ms_platinum_description_content');?>
-                                <div class="card_points">
-                                    <span class="points"><?=get_option('ms_platinum_score', 30)?></span><span class="text">Points</span>
-                                </div>
-                            </div>
+                            <?php
+                            }
+                            ?>
                         </div>
                         <div class="row privilege_card_group" style="gap: 10px;">
                             <?php
@@ -1060,10 +1131,7 @@ function apply_tier_discount_based_on_score($cart)
 
     // ถ้ามีส่วนลด ให้คำนวณยอดแล้วหักออก
     if ($discount_percentage > 0) {
-        // คำนวณจากราคาสินค้ารวมในตะกร้า (ไม่รวมภาษี/ค่าส่ง หรือจะใช้ get_subtotal ก็ได้)
         $discount_amount = $cart->get_subtotal() * $discount_percentage;
-
-        // บรรทัดนี้จะเพิ่มรายการส่วนลดเข้าไปในหน้า Checkout (ค่าติดลบเพื่อให้เป็นส่วนลด)
         $cart->add_fee(__('ส่วนลดพิเศษ: ' . $level_name, 'woocommerce'), -$discount_amount);
     }
 }
@@ -1080,7 +1148,7 @@ function redeem_form_in_my_account()
         return;
 
     $user_id = get_current_user_id();
-    // ดึงคะแนนจากตาราง users โดยตรง
+
     $score = (int) $wpdb->get_var($wpdb->prepare(
         "SELECT score FROM {$wpdb->prefix}users WHERE ID = %d",
         $user_id
@@ -1287,7 +1355,6 @@ function member_check_is_on_sale($is_on_sale, $product) {
 
     $discount_rate = getUserLevel("percent");
 
-    // ถ้าเรทเป็น 1 (คะแนนไม่ถึง 10) ห้ามบอกว่า On Sale เด็ดขาด
     if ($discount_rate >= 1) {
         return false; 
     }
@@ -1302,14 +1369,10 @@ function member_check_is_on_sale($is_on_sale, $product) {
 function getUserLevel($option) {
     global $wpdb;
     $user_id = get_current_user_id();
-
-    // 1. ดึงคะแนนจากตาราง users
     $user_score = (int) $wpdb->get_var($wpdb->prepare(
         "SELECT score FROM {$wpdb->prefix}users WHERE ID = %d",
         $user_id
     ));
-
-    // 2. เช็คระดับสมาชิก (เรียงจากระดับสูงสุดลงมา)
     if ($user_score >= get_option('ms_platinum_score', 30)) {
         $level_name = "platinum";
     } 
@@ -1325,9 +1388,7 @@ function getUserLevel($option) {
             return null;
         }
     }
-
     $discount_percent = get_option("member-privileges-$level_name", 0);
-
     if($option == "percent") {
         return  1 - ($discount_percent / 100);
     } else {
@@ -1650,9 +1711,11 @@ function display_combined_addon_and_tiered_discount() {
     }
 }
 
-add_action('wp_footer', 'add_level_color_to_user_icon');
+add_action('wp_footer', function() use ($membership_array) {
+    add_level_color_to_user_icon($membership_array);
+});
 
-function add_level_color_to_user_icon() {
+function add_level_color_to_user_icon($membership_array) {
     if (!is_user_logged_in())
         return;
     ?>
@@ -1695,41 +1758,30 @@ function add_level_color_to_user_icon() {
     .header-mobile .user-level-badge {
         display: none;
     }
-    .silver.user-level-badge {
-        background: <?=get_option('member-privileges-silver-color')?>;
+    <?php
+        foreach($membership_array as $membership) {
+    ?>
+    .<?=$membership->getSlug()?>.user-level-badge {
+        background: <?=$membership->getBackground()?>;
     }
-    .gold.user-level-badge {
-        background: <?=get_option('member-privileges-gold-color')?>;
+    .<?=$membership->getSlug()?>.level_color:hover {
+        color: <?=$membership->getColor()?> !important;
     }
-    .platinum.user-level-badge {
-        background: <?=get_option('member-privileges-platinum-color')?>;
-    }
+    <?php
+        }
+    ?>
 </style>
 <script type="text/javascript">
     (function($){
         var target = $('.bwp-header .block-top-link > .widget .widget-custom-menu .widget-title');
         <?php 
-        if(getUserLevel('name') == 'silver') {
+        foreach($membership_array as $membership) {
+            if(getUserLevel('name') == $membership->getSlug()) {
         ?>
         target.addClass('level_color');
-        target.addClass('silver');
+        target.addClass('<?=$membership->getSlug()?>');
         <?php
-        }
-        ?>
-        <?php 
-        if(getUserLevel('name') == 'gold') {
-        ?>
-        target.addClass('level_color');
-        target.addClass('gold');
-        <?php
-        }
-        ?>
-        <?php 
-        if(getUserLevel('name') == 'platinum') {
-        ?>
-        target.addClass('level_color');
-        target.addClass('platinum');
-        <?php
+            }
         }
         ?>
     })(jQuery);
