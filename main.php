@@ -853,7 +853,9 @@ Class MembershipCard {
     private $max_point;
     private $title;
     private $description;
+    private $description_content;
     private $background;
+    private $color;
     private $slug;
     public function getMinPoints() {
         return $this->min_point;
